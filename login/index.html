@@ -1,0 +1,137 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<link rel="stylesheet" href="../styles/GO.1.0.css" />
+		<link rel="stylesheet" href="../styles/GOfont/style.css" />
+		<title>Home | GALINI</title>
+	</head>
+	<body>
+		<div
+			class="col-6 sm-12 md-12 position-fixed position-top-right"
+			style="z-index: 1000; display: none;"
+		>
+			<div class="alert">
+				<button class="close" onclick="close()">&times;</button>
+				<p></p>
+			</div>
+		</div>
+		<div class="block fluid center">
+			<div class="col-5 sm-12 md-10 lg-8">
+				<form id="login" class="block justify-content-center">
+					<div class="col-6 sm-12">
+						<img
+							src="../assets/g.png"
+							style="display: block; width: 100%;"
+						/>
+					</div>
+					<div class="break-four"></div>
+					<div class="col-12">
+						<h1 class="title-five">
+							Pseudo
+						</h1>
+					</div>
+					<div class="col-12">
+						<input
+							type="text"
+							id="username"
+							name="username"
+							class="formbox formbox-lg horizontal-fluid"
+							placeholder="Pseudo"
+						/>
+					</div>
+					<div class="col-12">
+						<h1 class="title-five">
+							Mot De Passe
+						</h1>
+					</div>
+					<div class="col-12">
+						<input
+							type="password"
+							id="password"
+							name="password"
+							class="formbox formbox-lg horizontal-fluid"
+							placeholder="Mot De Passe"
+						/>
+					</div>
+					<div class="col-12">
+						<button
+							type="submit"
+							class="btn btn-lg btn-primary horizontal-fluid"
+						>
+							Connexion
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script src="../scripts/GO.1.0.js"></script>
+	<script>
+		GO(".alert")
+			.find(".close")
+			.click(function () {
+				GO(".alert").parent().css({ display: "none" });
+			});
+		GO("#login").submit(function (e) {
+			e.preventDefault();
+			let proceed = false;
+			if (GO("#username").val()) {
+				GO("#username").css({ "border-color": "" });
+			} else {
+				GO("#username").css({ "border-color": "red" });
+				proceed = true;
+			}
+			if (GO("#password").val()) {
+				GO("#password").css({ "border-color": "" });
+			} else {
+				GO("#password").css({ "border-color": "red" });
+				proceed = true;
+			}
+			if (proceed) {
+				GO(".alert").removeClass("alert-success");
+				GO(".alert").addClass("alert-danger");
+				GO(".alert").find("p").html("All Fields Are Required");
+				GO(".alert").parent().css({ display: "" });
+				return;
+			}
+			GO.ajax({
+				url: "../libs/login.php",
+				method: "POST",
+				data: new FormData(document.getElementById("login")),
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data["type"] === "Error") {
+						console.error("Login: Error");
+						GO(".alert").removeClass("alert-success");
+						GO(".alert").addClass("alert-danger");
+						GO(".alert").find("p").html(data["message"]);
+						GO(".alert").parent().css({ display: "" });
+					} else {
+						console.info("Login: Success");
+						GO(".alert").removeClass("alert-danger");
+						GO(".alert").addClass("alert-success");
+						GO(".alert").find("p").html(data["message"]);
+						GO(".alert").parent().css({ display: "" });
+						window.location.href = "../home/";
+					}
+				},
+			});
+		});
+		window.onload = function () {
+			GO.ajax({
+				url: "../libs/check.php",
+				method: "POST",
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data["loged_in"]) {
+						window.location.href = "../home/";
+					}
+				},
+			});
+		};
+	</script>
+</html>
