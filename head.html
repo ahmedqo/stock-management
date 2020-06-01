@@ -1,0 +1,127 @@
+<style>
+	.link {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+	}
+	.link .icon i {
+		color: #fff;
+	}
+	.link:hover {
+		background-color: var(--default);
+	}
+	.link:hover .icon i {
+		color: var(--bold);
+	}
+	.block {
+		width: 100%;
+		max-width: 100%;
+	}
+</style>
+<div
+	class="col-6 sm-12 md-12 position-fixed position-top-right"
+	style="z-index: 1000; display: none;"
+>
+	<div class="alert">
+		<button class="close" onclick="close()">&times;</button>
+		<p></p>
+	</div>
+</div>
+<header class="hidden visible-sm visible-md">
+	<div class="nav nav-bold">
+		<a class="nav-brand">
+			<img
+				src="../assets/l.png"
+				style="display: block; width: 50px;"
+			/>
+		</a>
+		<a class="nav-trigger"><span></span></a>
+	</div>
+</header>
+<div
+	id="sidebar"
+	class="col-max bg-bold align-items-center vertical-fluid position-fixed position-top-left auto-flow"
+	style="z-index: 10;"
+>
+	<ul class="list horizontal-fluid">
+		<li class="list-item">
+			<span class="icon icon-lg icon-blank">
+				<img
+					src="../assets/l.png"
+					style="display: block; width: 100%;"
+				/>
+			</span>
+		</li>
+		<li class="list-item">
+			<a href="../home/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-home"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../brand/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-tag"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../category/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-th-large"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../product/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-box"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../order/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-shopping-bag"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../report/" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-chart"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item admin">
+			<a href="#" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-persons"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item admin">
+			<a href="#" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-file"></i>
+				</span>
+			</a>
+		</li>
+		<li class="list-item">
+			<a href="../libs/logout.php" class="link">
+				<span class="icon icon-lg icon-blank">
+					<i class="GO-sign-out"></i>
+				</span>
+			</a>
+		</li>
+	</ul>
+</div>
+<script>
+	setTimeout(() => {
+		GO(".admin").css({ display: "none" });
+		console.log("yep");
+	}, 200);
+</script>
