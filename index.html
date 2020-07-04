@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<link rel="stylesheet" href="styles/GO.1.0.css" />
+		<link rel="stylesheet" href="styles/GOfont/style.css" />
+		<style>
+			.loader {
+				width: 100%;
+				padding: 17px;
+				margin: 5px 0;
+				animation: load 1s infinite reverse;
+			}
+			@keyframes load {
+				0% {
+					background-color: #f6f5f5;
+				}
+				50% {
+					background-color: #dfdddd;
+				}
+				100% {
+					background-color: #f6f5f5;
+				}
+			}
+			.block {
+				max-width: 100% !important;
+			}
+			button:hover {
+				cursor: pointer;
+			}
+			@media (max-width: 767.98px) {
+				h1.title-one {
+					font-size: 160% !important;
+				}
+				span.title-four {
+					font-size: 120% !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="nav nav-bold hidden visible-md visible-sm">
+			<div class="nav-container">
+				<div class="nav-brand">
+					<a
+						id="home"
+						onclick="showDisplay(
+						'home','Accieul'
+					);"
+					>
+						<img
+							src="assets/logo.png"
+							style="display: block; height: 40px;"
+						/>
+					</a>
+				</div>
+				<div onclick="trigger();" class="nav-trigger">
+					<span></span>
+				</div>
+			</div>
+		</div>
+		<div
+			id="sideBar"
+			class="col-max vertical-fluid bg-bold position-fixed position-top-left auto-flow"
+			style="z-index: 2;"
+		>
+			<button
+				onclick="showDisplay(
+                    'home','Accieul',homeDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<img src="assets/logo-sm.png" />
+			</button>
+			<div class="margin-top-six"></div>
+			<button
+				id="user"
+				onclick="showDisplay(
+                    'user','Utilisateur',usersDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-persons"></i>
+			</button>
+			<button
+				id="brand"
+				onclick="showDisplay(
+                    'brand','Marque',brandsDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-tag"></i>
+			</button>
+			<button
+				id="category"
+				onclick="showDisplay(
+                    'category','Categorie',categoriesDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-th-large"></i>
+			</button>
+			<button
+				id="supplier"
+				onclick="showDisplay(
+                    'supplier','Fournisseur',suppliersDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-factory"></i>
+			</button>
+			<button
+				id="product"
+				onclick="showDisplay(
+                    'product','Produit',productsDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-box"></i>
+			</button>
+			<button
+				id="order"
+				onclick="showDisplay(
+                    'order','Commande',ordersDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-shopping-bag"></i>
+			</button>
+			<button
+				id="report"
+				onclick="showDisplay(
+                    'report','Rapport',reportDataDisplay
+                );"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-chart"></i>
+			</button>
+			<button
+				onclick="window.location.href = 'libs/user/logout.php'"
+				class="nav icon icon-lg icon-blank margin-auto"
+				style="display: block;"
+			>
+				<i class="GO-sign-out"></i>
+			</button>
+		</div>
+		<div class="block horizontal-fluid">
+			<div class="col-max hidden-sm hidden-md bg-bold">
+				<span class="icon icon-lg"></span>
+			</div>
+			<div class="col" style="min-height: 100vh;">
+				<div id="data"></div>
+			</div>
+		</div>
+		<script src="scripts/GO.1.0.js"></script>
+		<script src="scripts/CODE.0.0.js"></script>
+	</body>
+</html>
