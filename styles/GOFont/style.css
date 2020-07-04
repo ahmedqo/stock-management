@@ -1,564 +1,622 @@
 @font-face {
-  font-family: 'GOFont';
-  src:  url('fonts/GOFont.eot?i3ozto');
-  src:  url('fonts/GOFont.eot?i3ozto#iefix') format('embedded-opentype'),
-    url('fonts/GOFont.ttf?i3ozto') format('truetype'),
-    url('fonts/GOFont.woff?i3ozto') format('woff'),
-    url('fonts/GOFont.svg?i3ozto#GOFont') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
+	font-family: "GOFont";
+	src: url("fonts/GOFont.eot?1zxl02");
+	src: url("fonts/GOFont.eot?1zxl02#iefix") format("embedded-opentype"),
+		url("fonts/GOFont.ttf?1zxl02") format("truetype"),
+		url("fonts/GOFont.woff?1zxl02") format("woff"),
+		url("fonts/GOFont.svg?1zxl02#GOFont") format("svg");
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
 }
 
-[class^="GO-"], [class*=" GO-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'GOFont' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+[class^="GO-"],
+[class*=" GO-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: "GOFont" !important;
+	speak: never;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
 
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-.GO-eye:before {
-  content: "\e9b0";
-}
 .GO-arrow-down:before {
-  content: "\e900";
+	content: "\e900";
 }
 .GO-arrow-left:before {
-  content: "\e901";
+	content: "\e901";
 }
 .GO-arrow-right:before {
-  content: "\e902";
+	content: "\e902";
 }
 .GO-arrow-up:before {
-  content: "\e903";
+	content: "\e903";
 }
 .GO-badge:before {
-  content: "\e904";
+	content: "\e904";
 }
 .GO-ban:before {
-  content: "\e905";
+	content: "\e905";
 }
 .GO-bell:before {
-  content: "\e906";
+	content: "\e906";
 }
 .GO-box:before {
-  content: "\e907";
+	content: "\e907";
 }
 .GO-boxes:before {
-  content: "\e908";
+	content: "\e908";
 }
 .GO-briefcase:before {
-  content: "\e909";
+	content: "\e909";
 }
 .GO-calendar:before {
-  content: "\e90a";
+	content: "\e90a";
 }
 .GO-cart:before {
-  content: "\e90b";
+	content: "\e90b";
+}
+.GO-case:before {
+	content: "\e90c";
+}
+.GO-chain:before {
+	content: "\e90d";
 }
 .GO-chart:before {
-  content: "\e90c";
+	content: "\e90e";
 }
 .GO-chart-pie:before {
-  content: "\e90d";
+	content: "\e90f";
 }
 .GO-checkbox:before {
-  content: "\e90e";
+	content: "\e910";
 }
 .GO-cog:before {
-  content: "\e90f";
+	content: "\e911";
 }
 .GO-cube:before {
-  content: "\e910";
+	content: "\e912";
 }
 .GO-dolly:before {
-  content: "\e911";
+	content: "\e913";
 }
 .GO-download:before {
-  content: "\e912";
+	content: "\e914";
 }
 .GO-edit:before {
-  content: "\e913";
+	content: "\e915";
+}
+.GO-eye:before {
+	content: "\e916";
 }
 .GO-facebook:before {
-  content: "\e914";
+	content: "\e917";
+}
+.GO-factory:before {
+	content: "\e918";
 }
 .GO-file:before {
-  content: "\e915";
+	content: "\e919";
+}
+.GO-folder:before {
+	content: "\e91a";
+}
+.GO-folder-open:before {
+	content: "\e91b";
 }
 .GO-fuel:before {
-  content: "\e916";
+	content: "\e91c";
 }
 .GO-gearbox:before {
-  content: "\e917";
+	content: "\e91d";
 }
 .GO-glasses:before {
-  content: "\e918";
+	content: "\e91e";
 }
 .GO-grid:before {
-  content: "\e919";
+	content: "\e91f";
 }
 .GO-grid-large:before {
-  content: "\e91a";
+	content: "\e920";
 }
 .GO-help:before {
-  content: "\e91b";
+	content: "\e921";
 }
 .GO-home:before {
-  content: "\e91c";
+	content: "\e922";
+}
+.GO-id:before {
+	content: "\e923";
 }
 .GO-info:before {
-  content: "\e91d";
+	content: "\e924";
 }
 .GO-instagram:before {
-  content: "\e91e";
+	content: "\e925";
 }
 .GO-lamp:before {
-  content: "\e91f";
+	content: "\e926";
 }
 .GO-list:before {
-  content: "\e920";
+	content: "\e927";
 }
 .GO-loop:before {
-  content: "\e921";
+	content: "\e928";
 }
 .GO-map-marker:before {
-  content: "\e922";
+	content: "\e929";
 }
 .GO-minus:before {
-  content: "\e923";
+	content: "\e92a";
 }
 .GO-paper-plane:before {
-  content: "\e924";
+	content: "\e92b";
 }
 .GO-pen:before {
-  content: "\e925";
+	content: "\e92c";
 }
 .GO-persons:before {
-  content: "\e926";
+	content: "\e92d";
 }
 .GO-phone:before {
-  content: "\e927";
+	content: "\e92e";
 }
 .GO-piggy-bank:before {
-  content: "\e928";
+	content: "\e92f";
 }
 .GO-pin:before {
-  content: "\e929";
+	content: "\e930";
 }
 .GO-plus:before {
-  content: "\e92a";
+	content: "\e931";
 }
 .GO-print:before {
-  content: "\e92b";
+	content: "\e932";
 }
 .GO-question:before {
-  content: "\e92c";
+	content: "\e933";
 }
 .GO-recharge:before {
-  content: "\e92d";
+	content: "\e934";
 }
 .GO-save:before {
-  content: "\e92e";
+	content: "\e935";
 }
 .GO-share:before {
-  content: "\e92f";
+	content: "\e936";
 }
 .GO-shopping-bag:before {
-  content: "\e930";
+	content: "\e937";
 }
 .GO-sign-in:before {
-  content: "\e931";
+	content: "\e938";
 }
 .GO-sign-out:before {
-  content: "\e932";
+	content: "\e939";
 }
 .GO-snow-flake:before {
-  content: "\e933";
+	content: "\e93a";
 }
 .GO-tag:before {
-  content: "\e934";
+	content: "\e93b";
 }
 .GO-th-large:before {
-  content: "\e935";
+	content: "\e93c";
 }
 .GO-times:before {
-  content: "\e936";
+	content: "\e93d";
 }
 .GO-trash:before {
-  content: "\e937";
+	content: "\e93e";
 }
 .GO-upload:before {
-  content: "\e938";
+	content: "\e93f";
 }
 .GO-wallet:before {
-  content: "\e939";
+	content: "\e940";
 }
 .GO-wheel:before {
-  content: "\e93a";
-}
-.GO-eye-circle:before {
-  content: "\e9b1";
+	content: "\e941";
 }
 .GO-arrow-down-circle:before {
-  content: "\e93b";
+	content: "\e942";
 }
 .GO-arrow-left-circle:before {
-  content: "\e93c";
+	content: "\e943";
 }
 .GO-arrow-right-circle:before {
-  content: "\e93d";
+	content: "\e944";
 }
 .GO-arrow-up-circle:before {
-  content: "\e93e";
+	content: "\e945";
 }
 .GO-badge-circle:before {
-  content: "\e93f";
+	content: "\e946";
 }
 .GO-ban-circle:before {
-  content: "\e940";
+	content: "\e947";
 }
 .GO-bell-circle:before {
-  content: "\e941";
+	content: "\e948";
 }
 .GO-box-circle:before {
-  content: "\e942";
+	content: "\e949";
 }
 .GO-boxes-circle:before {
-  content: "\e943";
+	content: "\e94a";
 }
 .GO-briefcase-circle:before {
-  content: "\e944";
+	content: "\e94b";
 }
 .GO-calendar-circle:before {
-  content: "\e945";
+	content: "\e94c";
 }
 .GO-cart-circle:before {
-  content: "\e946";
+	content: "\e94d";
+}
+.GO-case-circle:before {
+	content: "\e94e";
+}
+.GO-chain-circle:before {
+	content: "\e94f";
 }
 .GO-chart-circle:before {
-  content: "\e947";
+	content: "\e950";
 }
 .GO-chart-pie-circle:before {
-  content: "\e948";
+	content: "\e951";
 }
 .GO-checkbox-circle:before {
-  content: "\e949";
+	content: "\e952";
 }
 .GO-cog-circle:before {
-  content: "\e94a";
+	content: "\e953";
 }
 .GO-cube-circle:before {
-  content: "\e94b";
+	content: "\e954";
 }
 .GO-dolly-circle:before {
-  content: "\e94c";
+	content: "\e955";
 }
 .GO-download-circle:before {
-  content: "\e94d";
+	content: "\e956";
 }
 .GO-edit-circle:before {
-  content: "\e94e";
+	content: "\e957";
+}
+.GO-eye-circle:before {
+	content: "\e958";
 }
 .GO-facebook-circle:before {
-  content: "\e94f";
+	content: "\e959";
+}
+.GO-factory-circle:before {
+	content: "\e95a";
 }
 .GO-file-circle:before {
-  content: "\e950";
+	content: "\e95b";
+}
+.GO-folder-circle:before {
+	content: "\e95c";
+}
+.GO-folder-open-circle:before {
+	content: "\e95d";
 }
 .GO-fuel-circle:before {
-  content: "\e951";
+	content: "\e95e";
 }
 .GO-gearbox-circle:before {
-  content: "\e952";
+	content: "\e95f";
 }
 .GO-glasses-circle:before {
-  content: "\e953";
+	content: "\e960";
 }
 .GO-grid-circle:before {
-  content: "\e954";
+	content: "\e961";
 }
 .GO-grid-large-circle:before {
-  content: "\e955";
+	content: "\e962";
 }
 .GO-help-circle:before {
-  content: "\e956";
+	content: "\e963";
 }
 .GO-home-circle:before {
-  content: "\e957";
+	content: "\e964";
+}
+.GO-id-circle:before {
+	content: "\e965";
 }
 .GO-info-circle:before {
-  content: "\e958";
+	content: "\e966";
 }
 .GO-instagram-circle:before {
-  content: "\e959";
+	content: "\e967";
 }
 .GO-lamp-circle:before {
-  content: "\e95a";
+	content: "\e968";
 }
 .GO-list-circle:before {
-  content: "\e95b";
+	content: "\e969";
 }
 .GO-loop-circle:before {
-  content: "\e95c";
+	content: "\e96a";
 }
 .GO-map-marker-circle:before {
-  content: "\e95d";
+	content: "\e96b";
 }
 .GO-minus-circle:before {
-  content: "\e95e";
+	content: "\e96c";
 }
 .GO-paper-plane-circle:before {
-  content: "\e95f";
+	content: "\e96d";
 }
 .GO-pen-circle:before {
-  content: "\e960";
+	content: "\e96e";
 }
 .GO-persons-circle:before {
-  content: "\e961";
+	content: "\e96f";
 }
 .GO-phone-circle:before {
-  content: "\e962";
+	content: "\e970";
 }
 .GO-piggy-bank-circle:before {
-  content: "\e963";
+	content: "\e971";
 }
 .GO-pin-circle:before {
-  content: "\e964";
+	content: "\e972";
 }
 .GO-plus-circle:before {
-  content: "\e965";
+	content: "\e973";
 }
 .GO-print-circle:before {
-  content: "\e966";
+	content: "\e974";
 }
 .GO-question-circle:before {
-  content: "\e967";
+	content: "\e975";
 }
 .GO-recharge-circle:before {
-  content: "\e968";
+	content: "\e976";
 }
 .GO-save-circle:before {
-  content: "\e969";
+	content: "\e977";
 }
 .GO-share-circle:before {
-  content: "\e96a";
+	content: "\e978";
 }
 .GO-shopping-bag--circle:before {
-  content: "\e96b";
+	content: "\e979";
 }
 .GO-sign-in-circle:before {
-  content: "\e96c";
+	content: "\e97a";
 }
 .GO-sign-out-circle:before {
-  content: "\e96d";
+	content: "\e97b";
 }
 .GO-snow-flake-circle:before {
-  content: "\e96e";
+	content: "\e97c";
 }
 .GO-tag-circle:before {
-  content: "\e96f";
+	content: "\e97d";
 }
 .GO-th-large-circle:before {
-  content: "\e970";
+	content: "\e97e";
 }
 .GO-times-circle:before {
-  content: "\e971";
+	content: "\e97f";
 }
 .GO-trash-circle:before {
-  content: "\e972";
+	content: "\e980";
 }
 .GO-upload-circle:before {
-  content: "\e973";
+	content: "\e981";
 }
 .GO-wallet-circle:before {
-  content: "\e974";
+	content: "\e982";
 }
 .GO-wheel-circle:before {
-  content: "\e975";
-}
-.GO-eye-square:before {
-  content: "\e9b2";
+	content: "\e983";
 }
 .GO-arrow-down-square:before {
-  content: "\e976";
+	content: "\e984";
 }
 .GO-arrow-left-square:before {
-  content: "\e977";
+	content: "\e985";
 }
 .GO-arrow-right-square:before {
-  content: "\e978";
+	content: "\e986";
 }
 .GO-arrow-up-square:before {
-  content: "\e979";
+	content: "\e987";
 }
 .GO-badge-square:before {
-  content: "\e97a";
+	content: "\e988";
 }
 .GO-ban-square:before {
-  content: "\e97b";
+	content: "\e989";
 }
 .GO-bell-square:before {
-  content: "\e97c";
+	content: "\e98a";
 }
 .GO-boxes-square:before {
-  content: "\e97d";
+	content: "\e98b";
 }
 .GO-box-square:before {
-  content: "\e97e";
+	content: "\e98c";
 }
 .GO-briefcase-square:before {
-  content: "\e97f";
+	content: "\e98d";
 }
 .GO-calendar-square:before {
-  content: "\e980";
+	content: "\e98e";
 }
 .GO-cart-square:before {
-  content: "\e981";
+	content: "\e98f";
+}
+.GO-case-square:before {
+	content: "\e990";
+}
+.GO-chain-square:before {
+	content: "\e991";
 }
 .GO-chart-pie-square:before {
-  content: "\e982";
+	content: "\e992";
 }
 .GO-chart-square:before {
-  content: "\e983";
+	content: "\e993";
 }
 .GO-checkbox-square:before {
-  content: "\e984";
+	content: "\e994";
 }
 .GO-cog-square:before {
-  content: "\e985";
+	content: "\e995";
 }
 .GO-cube-square:before {
-  content: "\e986";
+	content: "\e996";
 }
 .GO-dolly-square:before {
-  content: "\e987";
+	content: "\e997";
 }
 .GO-download-square:before {
-  content: "\e988";
+	content: "\e998";
 }
 .GO-edit-square:before {
-  content: "\e989";
+	content: "\e999";
+}
+.GO-eye-square:before {
+	content: "\e99a";
+}
+.GO-facebook-square:before {
+	content: "\e99b";
+}
+.GO-factory-square:before {
+	content: "\e99c";
 }
 .GO-file-square:before {
-  content: "\e98a";
+	content: "\e99d";
+}
+.GO-folder-open-square:before {
+	content: "\e99e";
+}
+.GO-folder-square:before {
+	content: "\e99f";
 }
 .GO-fuel-square:before {
-  content: "\e98b";
+	content: "\e9a0";
 }
 .GO-gearbox-square:before {
-  content: "\e98c";
+	content: "\e9a1";
 }
 .GO-glasses-square:before {
-  content: "\e98d";
+	content: "\e9a2";
 }
 .GO-grid-large-square:before {
-  content: "\e98e";
+	content: "\e9a3";
 }
 .GO-grid-square:before {
-  content: "\e98f";
+	content: "\e9a4";
 }
 .GO-help-square:before {
-  content: "\e990";
+	content: "\e9a5";
 }
 .GO-home-square:before {
-  content: "\e991";
+	content: "\e9a6";
+}
+.GO-id-square:before {
+	content: "\e9a7";
 }
 .GO-info-square:before {
-  content: "\e992";
+	content: "\e9a8";
 }
 .GO-instagram-square:before {
-  content: "\e993";
+	content: "\e9a9";
 }
 .GO-lamp-square:before {
-  content: "\e994";
+	content: "\e9aa";
 }
 .GO-list-square:before {
-  content: "\e995";
+	content: "\e9ab";
 }
 .GO-loop-square:before {
-  content: "\e996";
+	content: "\e9ac";
 }
 .GO-map-marker-square:before {
-  content: "\e997";
+	content: "\e9ad";
 }
 .GO-minus-square:before {
-  content: "\e998";
+	content: "\e9ae";
 }
 .GO-paper-plane-square:before {
-  content: "\e999";
+	content: "\e9af";
 }
 .GO-pen-square:before {
-  content: "\e99a";
+	content: "\e9b0";
 }
 .GO-persons-square:before {
-  content: "\e99b";
+	content: "\e9b1";
 }
 .GO-phone-square:before {
-  content: "\e99c";
+	content: "\e9b2";
 }
 .GO-piggy-bank-square:before {
-  content: "\e99d";
+	content: "\e9b3";
 }
 .GO-pin-square:before {
-  content: "\e99e";
+	content: "\e9b4";
 }
 .GO-plus-square:before {
-  content: "\e99f";
+	content: "\e9b5";
 }
 .GO-print-square:before {
-  content: "\e9a0";
+	content: "\e9b6";
 }
 .GO-question-square:before {
-  content: "\e9a1";
+	content: "\e9b7";
 }
 .GO-recharge-square:before {
-  content: "\e9a2";
+	content: "\e9b8";
 }
 .GO-save-square:before {
-  content: "\e9a3";
+	content: "\e9b9";
 }
 .GO-share-square:before {
-  content: "\e9a4";
+	content: "\e9ba";
 }
 .GO-shopping-bag-square:before {
-  content: "\e9a5";
+	content: "\e9bb";
 }
 .GO-sign-in-square:before {
-  content: "\e9a6";
+	content: "\e9bc";
 }
 .GO-sign-out-square:before {
-  content: "\e9a7";
+	content: "\e9bd";
 }
 .GO-snow-flake-square:before {
-  content: "\e9a8";
+	content: "\e9be";
 }
 .GO-tag-square:before {
-  content: "\e9a9";
+	content: "\e9bf";
 }
 .GO-th-large-square:before {
-  content: "\e9aa";
+	content: "\e9c0";
 }
 .GO-times-square:before {
-  content: "\e9ab";
+	content: "\e9c1";
 }
 .GO-trash-square:before {
-  content: "\e9ac";
+	content: "\e9c2";
 }
 .GO-upload-square:before {
-  content: "\e9ad";
+	content: "\e9c3";
 }
 .GO-wallet-square:before {
-  content: "\e9ae";
+	content: "\e9c4";
 }
 .GO-wheel-square:before {
-  content: "\e9af";
+	content: "\e9c5";
 }
