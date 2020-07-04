@@ -3,7 +3,7 @@ date_default_timezone_set("Africa/Casablanca");
 class connection
 {
     private $host = "localhost";
-    private $db_name = "stock";
+    private $db_name = "projectGalini";
     private $username = "root";
     private $password = "";
     public $conn;
@@ -18,23 +18,177 @@ class connection
         return $this->conn;
     }
 }
-class login
+class user
 {
     public $bdd;
     public function __construct($db)
     {
         $this->bdd = $db;
     }
-    public function getUser($username, $password)
+
+    public function getAll()
     {
-        $query = 'SELECT * FROM users WHERE pseudo = :username limit 1';
+        $query = 'SELECT * FROM users ORDER BY id DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function get($id)
+    {
+        $query = 'SELECT * FROM users WHERE id=:id';
+        $params = array(
+            ':id' => $id
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function getUsername($id, $username)
+    {
+        if ($id) {
+            $query = 'SELECT * FROM users WHERE username=:username AND id != :id LIMIT 1';
+            $params = array(
+                ':id' => $id,
+                ':username' => $username
+            );
+        } else {
+            $query = 'SELECT * FROM users WHERE username=:username LIMIT 1';
+            $params = array(
+                ':username' => $username
+            );
+        }
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            if ($row) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public function set($username, $password, $type)
+    {
+        if ($this->getUsername(null, $username)) {
+            return 0;
+        }
+        $query = 'INSERT INTO users(username,password,type) VALUES(:username,:password,:type)';
+        $params = array(
+            ':username' => $username,
+            ':password' => md5($password),
+            ':type' => $type
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function reset($id, $username, $password, $type)
+    {
+        if ($this->getUsername($id, $username)) {
+            return 0;
+        }
+        if ($type) {
+            if (isset($password)) {
+                $query = 'UPDATE users SET username = :username, password = :password, type = :type WHERE id = :id';
+                $params = array(
+                    ':id' => $id,
+                    ':username' => $username,
+                    ':password' => md5($password),
+                    ':type' => $type
+                );
+            } else {
+                $query = 'UPDATE users SET username = :username, type = :type WHERE id = :id';
+                $params = array(
+                    ':id' => $id,
+                    ':username' => $username,
+                    ':type' => $type
+                );
+            }
+        } else {
+            if (isset($password)) {
+                $query = 'UPDATE users SET username = :username, password = :password WHERE id = :id';
+                $params = array(
+                    ':id' => $id,
+                    ':username' => $username,
+                    ':password' => md5($password)
+                );
+            } else {
+                $query = 'UPDATE users SET username = :username WHERE id = :id';
+                $params = array(
+                    ':id' => $id,
+                    ':username' => $username
+                );
+            }
+        }
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function status($id, $status)
+    {
+        $query = 'UPDATE users SET status = :status WHERE id=:id';
+        $params = array(
+            ':id' => $id,
+            ':status' => $status
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM users WHERE (username LIKE :label OR type LIKE :label) AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function login($username, $password)
+    {
+        $query = 'SELECT * FROM users WHERE username = :username limit 1';
         $params = array(
             ':username' => $username
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row["motdepasse"] == md5($password)) {
+            $row = $stmt->fetch();
+            if ($row[2] == md5($password)) {
                 return $row;
             } else {
                 return false;
@@ -51,15 +205,12 @@ class brand
     {
         $this->bdd = $db;
     }
-    public function getBrands($search, $status)
+
+    public function getAll()
     {
-        $query = 'SELECT * FROM marque WHERE nom_marque LIKE :search AND status_marque LIKE :status ORDER BY id_marque DESC';
-        $params = array(
-            ':search' => "%" . $search . "%",
-            ':status' => "%" . $status . "%"
-        );
+        $query = 'SELECT * FROM brands ORDER BY id DESC';
         $stmt = $this->bdd->prepare($query);
-        if ($stmt->execute($params)) {
+        if ($stmt->execute()) {
             $rows = $stmt->fetchAll();
             if (count($rows) > 0) {
                 return $rows;
@@ -70,9 +221,9 @@ class brand
         }
     }
 
-    public function getBrand($id)
+    public function get($id)
     {
-        $query = 'SELECT * FROM marque WHERE id_marque=:id';
+        $query = 'SELECT * FROM brands WHERE id=:id';
         $params = array(
             ':id' => $id
         );
@@ -85,18 +236,18 @@ class brand
         }
     }
 
-    public function getName($id, $name)
+    public function getLabel($id, $label)
     {
         if ($id) {
-            $query = 'SELECT * FROM marque WHERE nom_marque=:name AND id_marque != :id LIMIT 1';
+            $query = 'SELECT * FROM brands WHERE label=:label AND id != :id LIMIT 1';
             $params = array(
                 ':id' => $id,
-                ':name' => $name
+                ':label' => $label
             );
         } else {
-            $query = 'SELECT * FROM marque WHERE nom_marque=:name LIMIT 1';
+            $query = 'SELECT * FROM brands WHERE label=:label LIMIT 1';
             $params = array(
-                ':name' => $name
+                ':label' => $label
             );
         }
         $stmt = $this->bdd->prepare($query);
@@ -109,14 +260,14 @@ class brand
         }
     }
 
-    public function setBrand($name)
+    public function set($label)
     {
-        if ($this->getName(null, $name)) {
+        if ($this->getLabel(null, $label)) {
             return 0;
         }
-        $query = 'INSERT INTO marque(nom_marque,status_marque) VALUES(:name,1)';
+        $query = 'INSERT INTO brands(label) VALUES(:label)';
         $params = array(
-            ':name' => $name
+            ':label' => $label
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -126,15 +277,15 @@ class brand
         }
     }
 
-    public function resetBrand($id, $name)
+    public function reset($id, $label)
     {
-        if ($this->getName($id, $name)) {
+        if ($this->getLabel($id, $label)) {
             return 0;
         }
-        $query = 'UPDATE marque SET nom_marque = :name WHERE id_marque = :id';
+        $query = 'UPDATE brands SET label = :label WHERE id = :id';
         $params = array(
             ':id' => $id,
-            ':name' => $name
+            ':label' => $label
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -144,15 +295,34 @@ class brand
         }
     }
 
-    public function statusBrand($status, $id)
+    public function status($id, $status)
     {
-        $query = 'UPDATE marque SET status_marque = :status WHERE id_marque=:id';
+        $query = 'UPDATE brands SET status = :status WHERE id=:id';
         $params = array(
-            ':status' => $status,
-            ':id' => $id
+            ':id' => $id,
+            ':status' => $status
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM brands WHERE label LIKE :label AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
             return true;
         } else {
             return false;
@@ -166,12 +336,117 @@ class category
     {
         $this->bdd = $db;
     }
-    public function getCategories($search, $status)
+
+    public function getAll()
     {
-        $query = 'SELECT * FROM categorie WHERE nom_categorie LIKE :search AND status_categorie LIKE :status ORDER BY id_categorie DESC';
+        $query = 'SELECT * FROM categories ORDER BY id DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function get($id)
+    {
+        $query = 'SELECT * FROM categories WHERE id=:id';
         $params = array(
-            ':search' => "%" . $search . "%",
-            ':status' => "%" . $status . "%"
+            ':id' => $id
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function getLabel($id, $label)
+    {
+        if ($id) {
+            $query = 'SELECT * FROM categories WHERE label=:label AND id != :id LIMIT 1';
+            $params = array(
+                ':id' => $id,
+                ':label' => $label
+            );
+        } else {
+            $query = 'SELECT * FROM categories WHERE label=:label LIMIT 1';
+            $params = array(
+                ':label' => $label
+            );
+        }
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            if ($row) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public function set($label)
+    {
+        if ($this->getLabel(null, $label)) {
+            return 0;
+        }
+        $query = 'INSERT INTO categories(label) VALUES(:label)';
+        $params = array(
+            ':label' => $label
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function reset($id, $label)
+    {
+        if ($this->getLabel($id, $label)) {
+            return 0;
+        }
+        $query = 'UPDATE categories SET label = :label WHERE id = :id';
+        $params = array(
+            ':id' => $id,
+            ':label' => $label
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function status($id, $status)
+    {
+        $query = 'UPDATE categories SET status = :status WHERE id=:id';
+        $params = array(
+            ':id' => $id,
+            ':status' => $status
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM categories WHERE label LIKE :label AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -184,10 +459,33 @@ class category
             return false;
         }
     }
-
-    public function getCategory($id)
+}
+class supplier
+{
+    public $bdd;
+    public function __construct($db)
     {
-        $query = 'SELECT * FROM categorie WHERE id_categorie=:id';
+        $this->bdd = $db;
+    }
+
+    public function getAll()
+    {
+        $query = 'SELECT * FROM suppliers ORDER BY id DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function get($id)
+    {
+        $query = 'SELECT * FROM suppliers WHERE id=:id';
         $params = array(
             ':id' => $id
         );
@@ -203,13 +501,13 @@ class category
     public function getName($id, $name)
     {
         if ($id) {
-            $query = 'SELECT * FROM categorie WHERE nom_categorie=:name AND id_categorie != :id LIMIT 1';
+            $query = 'SELECT * FROM suppliers WHERE name=:name AND id != :id LIMIT 1';
             $params = array(
                 ':id' => $id,
                 ':name' => $name
             );
         } else {
-            $query = 'SELECT * FROM categorie WHERE nom_categorie=:name LIMIT 1';
+            $query = 'SELECT * FROM suppliers WHERE name=:name LIMIT 1';
             $params = array(
                 ':name' => $name
             );
@@ -224,14 +522,16 @@ class category
         }
     }
 
-    public function setCategory($name)
+    public function set($name, $contact, $address)
     {
         if ($this->getName(null, $name)) {
             return 0;
         }
-        $query = 'INSERT INTO categorie(nom_categorie,status_categorie) VALUES(:name,1)';
+        $query = 'INSERT INTO suppliers(name,contact,address) VALUES(:name,:contact,:address)';
         $params = array(
-            ':name' => $name
+            ':name' => $name,
+            ':contact' => $contact,
+            ':address' => $address
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -241,15 +541,17 @@ class category
         }
     }
 
-    public function resetCategory($id, $name)
+    public function reset($id, $name, $contact, $address)
     {
         if ($this->getName($id, $name)) {
             return 0;
         }
-        $query = 'UPDATE categorie SET nom_categorie = :name WHERE id_categorie = :id';
+        $query = 'UPDATE suppliers SET name = :name, contact = :contact, address = :address WHERE id = :id';
         $params = array(
             ':id' => $id,
-            ':name' => $name
+            ':name' => $name,
+            ':contact' => $contact,
+            ':address' => $address
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -259,15 +561,34 @@ class category
         }
     }
 
-    public function statusCategory($status, $id)
+    public function status($id, $status)
     {
-        $query = 'UPDATE categorie SET status_categorie = :status WHERE id_categorie=:id';
+        $query = 'UPDATE suppliers SET status = :status WHERE id=:id';
         $params = array(
-            ':status' => $status,
-            ':id' => $id
+            ':id' => $id,
+            ':status' => $status
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM suppliers WHERE (name LIKE :label OR contact LIKE :label OR address LIKE :label) AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
             return true;
         } else {
             return false;
@@ -282,15 +603,11 @@ class product
         $this->bdd = $db;
     }
 
-    public function getProducts($search, $status)
+    public function getAll()
     {
-        $query = 'SELECT * FROM produit WHERE (nom_produit LIKE :search OR quantite_produit LIKE :search OR prix_produit LIKE :search) AND status_produit LIKE :status ORDER BY id_produit DESC';
-        $params = array(
-            ':search' => "%" . $search . "%",
-            ':status' => "%" . $status . "%"
-        );
+        $query = 'SELECT * FROM products ORDER BY id DESC';
         $stmt = $this->bdd->prepare($query);
-        if ($stmt->execute($params)) {
+        if ($stmt->execute()) {
             $rows = $stmt->fetchAll();
             if (count($rows) > 0) {
                 return $rows;
@@ -301,9 +618,9 @@ class product
         }
     }
 
-    public function getProduct($id)
+    public function get($id)
     {
-        $query = 'SELECT * FROM produit WHERE id_produit = :id';
+        $query = 'SELECT * FROM products WHERE id=:id';
         $params = array(
             ':id' => $id
         );
@@ -319,13 +636,13 @@ class product
     public function getTitle($id, $title)
     {
         if ($id) {
-            $query = 'SELECT * FROM produit WHERE nom_produit = :title AND id_produit != :id LIMIT 1';
+            $query = 'SELECT * FROM products WHERE title=:title AND id != :id LIMIT 1';
             $params = array(
                 ':id' => $id,
                 ':title' => $title
             );
         } else {
-            $query = 'SELECT * FROM produit WHERE nom_produit = :title LIMIT 1';
+            $query = 'SELECT * FROM products WHERE title=:title LIMIT 1';
             $params = array(
                 ':title' => $title
             );
@@ -340,111 +657,57 @@ class product
         }
     }
 
-    public function getImage($id)
+    public function setSold($id, $order, $quantity)
     {
-        $query = 'SELECT * FROM produit WHERE id_produit = :id LIMIT 1';
+        $row = $this->get($id);
+        if ($row[8] < $quantity) {
+            $quantity = $row[8];
+            $item = new item($this->bdd);
+            $item->quantity($order, $id, $quantity);
+        }
+        $query = 'UPDATE products SET stock = stock - :quantity, sold = sold + :quantity WHERE id = :id';
         $params = array(
-            ':id' => $id
+            ':id' => $id,
+            ':quantity' => $quantity,
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
-            $row = $stmt->fetch();
-            if ($row) {
-                return $row['image_produit'];
-            } else {
-                return 0;
-            }
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function setProduct($title, $image, $brand, $category, $quantity, $price)
+    public function setStock($id, $quantity)
+    {
+        $query = 'UPDATE products SET stock = stock + :quantity, sold = sold - :quantity WHERE id = :id';
+        $params = array(
+            ':id' => $id,
+            ':quantity' => $quantity,
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function set($title, $brand, $category, $supplier, $cost, $profit, $quantity)
     {
         if ($this->getTitle(null, $title)) {
             return 0;
         }
-        $type = explode('.', $image['name']);
-        $type = $type[count($type) - 1];
-        $img = uniqid(rand()) . '.' . $type;
-        if (in_array($type, array('gif', 'jpg', 'jpeg', 'png', 'JPG', 'GIF', 'JPEG', 'PNG'))) {
-            if (is_uploaded_file($image['tmp_name'])) {
-                if (move_uploaded_file($image['tmp_name'], '../assets/image/' . $img)) {
-                    $query = 'INSERT INTO produit(nom_produit,image_produit,id_marque,id_categorie,quantite_produit,prix_produit,status_produit) VALUES(:title,:image,:brand,:category,:quantity,:price,1)';
-                    $params = array(
-                        ':title' => $title,
-                        ':image' => $img,
-                        ':brand' => $brand,
-                        ':category' => $category,
-                        ':quantity' => $quantity,
-                        ':price' => $price
-                    );
-                    $stmt = $this->bdd->prepare($query);
-                    if ($stmt->execute($params)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public function resetProduct($id, $title, $image, $brand, $category, $quantity, $price)
-    {
-        $img = $move = '';
-        if ($image['error'] == 4) {
-            $img = $this->getImage($id);
-            $move = true;
-        } else {
-            $type = explode('.', $image['name']);
-            $type = $type[count($type) - 1];
-            $img = uniqid(rand()) . '.' . $type;
-            unlink('../assets/image/' . $this->getImage($id));
-            if (in_array($type, array('gif', 'jpg', 'jpeg', 'png', 'JPG', 'GIF', 'JPEG', 'PNG'))) {
-                if (is_uploaded_file($image['tmp_name'])) {
-                    if (move_uploaded_file($image['tmp_name'], '../assets/image/' . $img)) {
-                        $move = true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        if ($move) {
-            $query = 'UPDATE  produit SET nom_produit = :title, image_produit = :image, id_marque = :brand, id_categorie = :category,  quantite_produit = :quantity, prix_produit = :price WHERE id_produit = :id';
-            $params = array(
-                ':title' => $title,
-                ':image' => $img,
-                ':brand' => $brand,
-                ':category' => $category,
-                ':quantity' => $quantity,
-                ':price' => $price,
-                ':id' => $id
-            );
-            $stmt = $this->bdd->prepare($query);
-            if ($stmt->execute($params)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public function statusProduct($status, $id)
-    {
-        $query = 'UPDATE produit SET status_produit = :status WHERE id_produit=:id';
+        $query = 'INSERT INTO products(title,brand,category,supplier,cost,profit,quantity,stock) VALUES(:title,:brand,:category,:supplier,:cost,:profit,:quantity,:stock)';
         $params = array(
-            ':status' => $status,
-            ':id' => $id
+            ':title' => $title,
+            ':brand' => $brand,
+            ':category' => $category,
+            ':supplier' => $supplier,
+            ':cost' => $cost,
+            ':profit' => $profit,
+            ':quantity' => $quantity,
+            ':stock' => $quantity
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -454,12 +717,22 @@ class product
         }
     }
 
-    public function plusQte($id, $qte)
+    public function reset($id, $title, $brand, $category, $supplier, $cost, $profit, $quantity)
     {
-        $query = 'UPDATE produit SET quantite_produit = quantite_produit + :qte WHERE id_produit=:id';
+        if ($this->getTitle($id, $title)) {
+            return 0;
+        }
+        $query = 'UPDATE products SET brand = :brand, category = :category, supplier = :supplier, title = :title, cost = :cost, profit = :profit, quantity = :quantity, stock = :stock - sold WHERE id = :id';
         $params = array(
-            ':qte' => $qte,
-            ':id' => $id
+            ':id' => $id,
+            ':title' => $title,
+            ':brand' => $brand,
+            ':category' => $category,
+            ':supplier' => $supplier,
+            ':cost' => $cost,
+            ':profit' => $profit,
+            ':quantity' => $quantity,
+            ':stock' => $quantity
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -469,15 +742,34 @@ class product
         }
     }
 
-    public function minusQte($id, $qte)
+    public function status($id, $status)
     {
-        $query = 'UPDATE produit SET quantite_produit = quantite_produit - :qte WHERE id_produit=:id';
+        $query = 'UPDATE products SET status = :status WHERE id=:id';
         $params = array(
-            ':qte' => $qte,
-            ':id' => $id
+            ':id' => $id,
+            ':status' => $status
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM products WHERE (title LIKE :label OR cost LIKE :label OR profit LIKE :label OR stock LIKE :label OR sold LIKE :label) AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
             return true;
         } else {
             return false;
@@ -492,15 +784,11 @@ class order
         $this->bdd = $db;
     }
 
-    public function getOrders($search, $status)
+    public function getAll()
     {
-        $query = 'SELECT * FROM commande WHERE (date_commande LIKE :search OR total_commande LIKE :search OR type_paiement LIKE :search OR nom_client LIKE :search OR tele_client LIKE :search OR adresse_client LIKE :search) AND status_commande LIKE :status ORDER BY id_commande DESC';
-        $params = array(
-            ':search' => "%" . $search . "%",
-            ':status' => "%" . $status . "%"
-        );
+        $query = 'SELECT * FROM orders ORDER BY id DESC';
         $stmt = $this->bdd->prepare($query);
-        if ($stmt->execute($params)) {
+        if ($stmt->execute()) {
             $rows = $stmt->fetchAll();
             if (count($rows) > 0) {
                 return $rows;
@@ -511,9 +799,9 @@ class order
         }
     }
 
-    public function getOrder($id)
+    public function get($id)
     {
-        $query = 'SELECT * FROM commande WHERE id_commande = :id';
+        $query = 'SELECT * FROM orders WHERE id=:id';
         $params = array(
             ':id' => $id
         );
@@ -526,74 +814,119 @@ class order
         }
     }
 
-    public function setOrder($name, $phone, $address, $total, $payment, $products, $quantities, $prices)
+    public function getMoney($id)
     {
-        $query = "INSERT INTO commande(date_commande,nom_client,tele_client,adresse_client,total_commande,type_paiement,status_commande) VALUES(:date,:name,:phone,:address,:total,:payment,1)";
+        $query = 'SELECT total,paid FROM orders WHERE id=:id';
         $params = array(
-            ':date' => date('Y-m-d'),
-            ':name' => $name,
-            ':phone' => $phone,
-            ':address' => $address,
-            ':total' => $total,
-            ':payment' => $payment
-        );
-        $stmt = $this->bdd->prepare($query);
-        if ($stmt->execute($params)) {
-            $id = $this->bdd->lastInsertId();
-            $items = new item($this->bdd);
-            $items->setItem($id, $products, $quantities, $prices);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function resetOrder($id, $name, $phone, $address, $total, $payment, $products, $quantities, $prices)
-    {
-        $items = new item($this->bdd);
-        $items->delItem($id);
-        $query = "UPDATE commande SET nom_client = :name,tele_client = :phone,adresse_client = :address,total_commande = :total,type_paiement = :payment WHERE id_commande = :id";
-        $params = array(
-            ':id' => $id,
-            ':name' => $name,
-            ':phone' => $phone,
-            ':address' => $address,
-            ':total' => $total,
-            ':payment' => $payment
-        );
-        $stmt = $this->bdd->prepare($query);
-        if ($stmt->execute($params)) {
-            $items = new item($this->bdd);
-            $items->setItem($id, $products, $quantities, $prices);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function statusOrder($status, $id)
-    {
-        $query = 'UPDATE commande SET status_commande = :status WHERE id_commande=:id';
-        $params = array(
-            ':status' => $status,
             ':id' => $id
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
-            $item = new item($this->bdd);
-            $item->statusItem($status, $id);
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function plusPaid($id, $amount)
+    {
+        $query = 'UPDATE orders SET paid = paid + :paid WHERE id = :id';
+        $params = array(
+            ':id' => $id,
+            ':paid' => $amount,
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function rapportOrder($start, $end)
+    public function minusPaid($id, $amount)
     {
-        $query = 'SELECT * FROM commande WHERE date_commande >= :start AND date_commande <= :end ORDER BY id_commande DESC';
+        $query = 'UPDATE orders SET paid = paid - :paid WHERE id = :id';
         $params = array(
-            ':start' => $start,
-            ':end' => $end
+            ':id' => $id,
+            ':paid' => $amount,
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function set($name, $contact, $address, $total, $products, $prices, $quantities)
+    {
+        $query = 'INSERT INTO orders(name,contact,address,total) VALUES(:name,:contact,:address,:total)';
+        $params = array(
+            ':name' => $name,
+            ':contact' => $contact,
+            ':address' => $address,
+            ':total' => $total,
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $order = $this->bdd->lastInsertId();
+            $item = new item($this->bdd);
+            for ($i = 0; $i < count($products); $i++) {
+                $item->set($order, $products[$i], $prices[$i], $quantities[$i]);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function reset($id, $name, $contact, $address, $total, $products, $prices, $quantities)
+    {
+        $query = 'UPDATE orders SET name = :name, contact = :contact, address = :address, total = :total WHERE id = :id';
+        $params = array(
+            ':id' => $id,
+            ':name' => $name,
+            ':contact' => $contact,
+            ':address' => $address,
+            ':total' => $total,
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $item = new item($this->bdd);
+            $item->clear($id);
+            for ($i = 0; $i < count($products); $i++) {
+                $item->set($id, $products[$i], $prices[$i], $quantities[$i]);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function status($id, $status)
+    {
+        $query = 'UPDATE orders SET status = :status WHERE id=:id';
+        $params = array(
+            ':id' => $id,
+            ':status' => $status
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $item = new item($this->bdd);
+            $item->status($id, $status);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM orders WHERE (name LIKE :label OR contact LIKE :label OR address LIKE :label OR total LIKE :label OR paid LIKE :label) AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -602,6 +935,21 @@ class order
                 return $rows;
             }
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function print($id)
+    {
+        $query = 'SELECT o.date,o.name, o.contact,o.address,o.total, p.title, i.price, i.quantity, i.total FROM products p,orders o,items i WHERE o.id = i.ordeer AND p.id = i.product AND o.id = :id';
+        $params = array(
+            ':id' => $id
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            return $rows;
         } else {
             return false;
         }
@@ -614,11 +962,12 @@ class item
     {
         $this->bdd = $db;
     }
-    public function getItems($id)
+
+    public function getAll($order)
     {
-        $query = 'SELECT * FROM produit_commander,produit WHERE produit_commander.id_commande = :id AND produit_commander.id_produit = produit.id_produit';
+        $query = 'SELECT * FROM items WHERE ordeer = :order ORDER BY id DESC';
         $params = array(
-            ':id' => $id
+            ':order' => $order
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -631,40 +980,42 @@ class item
             return false;
         }
     }
-    public function setItem($id, $products, $quantities, $prices)
+
+    public function set($order, $product, $price, $quantity)
     {
-        for ($i = 0; $i < count($products); $i++) {
-            $query = 'INSERT INTO `produit_commander`(id_commande,id_produit,quantite,prix,total,status_produit_commander) VALUES (:id,:product,:quantity,:price,:total,1)';
-            $params = array(
-                ':id' => $id,
-                ':product' => $products[$i],
-                ':quantity' => $quantities[$i],
-                ':price' => $prices[$i],
-                ':total' => $quantities[$i] * $prices[$i]
-            );
-            $stmt = $this->bdd->prepare($query);
-            $stmt->execute($params);
-            $product = new product($this->bdd);
-            $product->minusQte($products[$i], $quantities[$i]);
+        $query = 'INSERT INTO items(ordeer,product,price,quantity,total) VALUES(:order,:product,:price,:quantity,:total)';
+        $params = array(
+            ':order' => $order,
+            ':product' => $product,
+            ':price' => $price,
+            ':quantity' => $quantity,
+            ':total' => $quantity * $price
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $Product = new product($this->bdd);
+            $Product->setSold($product, $order, $quantity);
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
-    public function statusItem($status, $id)
+
+    public function status($order, $status)
     {
-        $rows = $this->getItems($id);
+        $rows = $this->getAll($order);
+        $Product = new product($this->bdd);
         for ($i = 0; $i < count($rows); $i++) {
-            if ($status) {
-                $product = new product($this->bdd);
-                $product->minusQte($rows[$i]['id_produit'], $rows[$i]['quantite']);
+            if ($status === "0") {
+                $Product->setStock($rows[$i][2], $rows[$i][4]);
             } else {
-                $product = new product($this->bdd);
-                $product->plusQte($rows[$i]['id_produit'], $rows[$i]['quantite']);
+                $Product->setSold($rows[$i][2], $order, $rows[$i][4]);
             }
         }
-        $query = 'UPDATE produit_commander SET status_produit_commander = :status WHERE id_commande=:id';
+        $query = 'UPDATE items SET status = :status WHERE ordeer=:order';
         $params = array(
-            ':status' => $status,
-            ':id' => $id
+            ':order' => $order,
+            ':status' => $status
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
@@ -673,20 +1024,156 @@ class item
             return false;
         }
     }
-    public function delItem($id)
+
+    public function quantity($order, $product, $quantity)
     {
-        $rows = $this->getItems($id);
-        for ($i = 0; $i < count($rows); $i++) {
-            $product = new product($this->bdd);
-            $product->plusQte($rows[$i]['id_produit'], $rows[$i]['quantite']);
+        $query = 'UPDATE items SET quantity = :quantity WHERE ordeer=:order AND product=:product';
+        $params = array(
+            ':order' => $order,
+            ':product' => $product,
+            ':quantity' => $quantity
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
         }
-        $query = 'DELETE FROM produit_commander WHERE id_commande=:id';
+    }
+
+    public function clear($order)
+    {
+        $rows = $this->getAll($order);
+        $Product = new product($this->bdd);
+        for ($i = 0; $i < count($rows); $i++) {
+            $Product->setStock($rows[$i][2], $rows[$i][4]);
+        }
+        $query = 'DELETE FROM items WHERE ordeer = :order';
+        $params = array(
+            ':order' => $order
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+class payment
+{
+    public $bdd;
+    public function __construct($db)
+    {
+        $this->bdd = $db;
+    }
+
+    public function getAll($order)
+    {
+        $query = 'SELECT * FROM payments WHERE ordeer = :order ORDER BY id DESC';
+        $params = array(
+            ':order' => $order
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function get($id)
+    {
+        $query = 'SELECT * FROM payments WHERE id=:id';
         $params = array(
             ':id' => $id
         );
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function set($order, $amount, $type)
+    {
+        $Order = new order($this->bdd);
+        $row = $Order->getMoney($order);
+        if ($row[0] < $row[1] + $amount) {
+            return $row[0] - $row[1];
+        }
+        $query = 'INSERT INTO payments(ordeer,amount,type) VALUES(:order,:amount,:type)';
+        $params = array(
+            ':order' => $order,
+            ':amount' => $amount,
+            ':type' => $type
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $Order->plusPaid($order, $amount);
+            return 'true';
+        } else {
+            return false;
+        }
+    }
+
+    public function status($id, $order, $status)
+    {
+        $row = $this->get($id);
+        $Order = new order($this->bdd);
+        if ($status == "0") {
+            $Order->minusPaid($order, $row[2]);
+        } else {
+            $Order->plusPaid($order, $row[2]);
+        }
+        $query = 'UPDATE payments SET status = :status WHERE id=:id';
+        $params = array(
+            ':id' => $id,
+            ':status' => $status
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function search($label, $status)
+    {
+        $query = 'SELECT * FROM payments WHERE (date LIKE :label OR type LIKE :label OR amount LIKE :label) AND status LIKE :status ORDER BY id DESC';
+        $params = array(
+            ':label' => '%' . $label . '%',
+            ':status' => '%' . $status . '%'
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function print($id)
+    {
+        $query = 'SELECT o.name, o.contact,o.address,o.total,o.paid, p.date, p.type, p.amount FROM payments p,orders o WHERE o.id = p.ordeer AND p.id = :id';
+        $params = array(
+            ':id' => $id
+        );
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute($params)) {
+            $row = $stmt->fetch();
+            return $row;
         } else {
             return false;
         }
@@ -699,9 +1186,82 @@ class report
     {
         $this->bdd = $db;
     }
+
+    public function sumMoney()
+    {
+        $query = 'SELECT SUM(total) FROM orders WHERE status = 1';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function paidMoney()
+    {
+        $query = 'SELECT SUM(paid) FROM orders WHERE status = 1';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function currentOrders()
+    {
+        $query = 'SELECT COUNT(id) FROM orders WHERE status=1';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function canceledOrders()
+    {
+        $query = 'SELECT COUNT(id) FROM orders WHERE status=0';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function currentProducts()
+    {
+        $query = 'SELECT COUNT(id) FROM products';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function lowProducts()
+    {
+        $query = 'SELECT COUNT(id) FROM products WHERE stock <=4';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $row = $stmt->fetch();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
     public function performance()
     {
-        $query = 'SELECT * ,SUM(pc.quantite) as quantite FROM produit p,produit_commander pc WHERE p.id_produit = pc.id_produit GROUP BY pc.id_produit';
+        $query = 'SELECT title,sold,cost,profit FROM products WHERE sold > 0 ORDER BY sold DESC';
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute()) {
             $rows = $stmt->fetchAll();
@@ -713,9 +1273,55 @@ class report
             return false;
         }
     }
-    public function prods()
+
+    public function orders()
     {
-        $query = 'SELECT * FROM produit p,marque m,categorie c WHERE p.id_marque = m.id_marque AND p.id_categorie = c.id_categorie ';
+        $query = 'SELECT date,name,total,paid,status FROM orders ORDER BY total DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function products()
+    {
+        $query = 'SELECT p.title AS title, b.label AS brand, c.label AS category, s.name AS supplier, p.cost AS cost, p.profit AS profit, p.stock AS stock, p.status AS status FROM products p, suppliers s, brands b, categories c WHERE p.brand = b.id AND p.category = c.id AND p.supplier = s.id ORDER BY p.id DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function suppliers()
+    {
+        $query = 'SELECT DISTINCT s.name AS name, s.status AS status FROM products p, suppliers s WHERE p.supplier = s.id ORDER BY p.quantity DESC';
+        $stmt = $this->bdd->prepare($query);
+        if ($stmt->execute()) {
+            $rows = $stmt->fetchAll();
+            if (count($rows) > 0) {
+                return $rows;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function lowStocks()
+    {
+        $query = 'SELECT title, stock FROM products WHERE stock <= 4 ORDER BY stock ASC';
         $stmt = $this->bdd->prepare($query);
         if ($stmt->execute()) {
             $rows = $stmt->fetchAll();
