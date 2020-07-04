@@ -1,0 +1,23 @@
+<script src="../scripts/GO.1.0.js"></script>
+<script>
+	window.onload = function () {
+		GO.ajax({
+			url: "../libs/user/check.php",
+			method: "POST",
+			success: function (data) {
+				data = JSON.parse(data);
+				if (data["type"] === "Success") {
+					if (data["message"]["type"] === "Admin") {
+						window.location.href =
+							"../index.html?target=supplier";
+					} else {
+						window.location.href =
+							"../index.html?target=home";
+					}
+				} else {
+					window.location.href = "../login/";
+				}
+			},
+		});
+	};
+</script>
