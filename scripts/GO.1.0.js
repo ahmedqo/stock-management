@@ -29,6 +29,7 @@ function GO(selector) {
 		if (list.length === 0) {
 			throw new Error(`GO("${selector}") Not Found In The DOM`);
 		}
+		list = Array.from(list);
 		return list;
 	}
 	self.selector = new Selector();
@@ -42,9 +43,9 @@ function GO(selector) {
 				return self.selector[0].value;
 			}
 		} else if (typeof value === "string" || typeof value === "number") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].value = value;
-			}
+			self.selector.forEach((sel) => {
+				sel.value = value;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").val(...) accept String or Null as argument not ${typeof value}`
@@ -62,9 +63,9 @@ function GO(selector) {
 				return self.selector[0].innerText;
 			}
 		} else if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].innerText = value;
-			}
+			self.selector.forEach((sel) => {
+				sel.innerText = value;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").text(...) accept String or Null as argument not ${typeof value}`
@@ -81,9 +82,9 @@ function GO(selector) {
 					return false;
 				}
 			} else {
-				for (let i = 0; i < self.selector.length; i++) {
-					self.selector[i].setAttribute(name, value);
-				}
+				self.selector.forEach((sel) => {
+					sel.setAttribute(name, value);
+				});
 			}
 		} else {
 			throw new Error(
@@ -94,9 +95,9 @@ function GO(selector) {
 	};
 	self.removeAttr = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].removeAttribute(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.removeAttribute(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").removeAttr(...) accept String as argument not ${typeof value}`
@@ -121,9 +122,9 @@ function GO(selector) {
 		if (typeof value === "undefined") {
 			return self.selector[0].innerHTML;
 		} else if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].innerHTML = value;
-			}
+			self.selector.forEach((sel) => {
+				sel.innerHTML = value;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").html(...) accept String or Null as argument not ${typeof value}`
@@ -172,9 +173,9 @@ function GO(selector) {
 	};
 	self.append = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].insertAdjacentHTML("beforeend", value);
-			}
+			self.selector.forEach((sel) => {
+				sel.insertAdjacentHTML("beforeend", value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").append(...) accept String as argument not ${typeof value}`
@@ -184,9 +185,9 @@ function GO(selector) {
 	};
 	self.appendChild = function (value) {
 		if (typeof value === "object") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].append(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.append(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").appendChild(...) accept Object as argument not ${typeof value}`
@@ -196,9 +197,9 @@ function GO(selector) {
 	};
 	self.prepend = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].insertAdjacentHTML("afterbegin", value);
-			}
+			self.selector.forEach((sel) => {
+				sel.insertAdjacentHTML("afterbegin", value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").prepend(...) accept String as argument not ${typeof value}`
@@ -208,9 +209,9 @@ function GO(selector) {
 	};
 	self.prependChild = function (value) {
 		if (typeof value === "object") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].prepend(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.prepend(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").prependChild(...) accept Object as argument not ${typeof value}`
@@ -220,9 +221,9 @@ function GO(selector) {
 	};
 	self.replace = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].replaceWith(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.replaceWith(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").replace(...) accept String as argument not ${typeof value}`
@@ -232,9 +233,9 @@ function GO(selector) {
 	};
 	self.replaceChild = function (value) {
 		if (typeof value === "object") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].replaceWith(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.replaceWith(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").replaceChild(...) accept Object as argument not ${typeof value}`
@@ -243,20 +244,20 @@ function GO(selector) {
 		return;
 	};
 	self.remove = function (value) {
-		for (let i = 0; i < self.selector.length; i++) {
+		self.selector.forEach((sel) => {
 			if (value) {
-				self.selector[i].parentNode.removeChild(value);
+				sel.parentNode.removeChild(value);
 			} else {
-				self.selector[i].parentNode.removeChild(self.selector[i]);
+				sel.parentNode.removeChild(sel);
 			}
-		}
+		});
 		return;
 	};
 	self.removeChild = function (value) {
 		if (typeof value === "object") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].parentNode.removeChild(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.parentNode.removeChild(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").removeChild(...) accept Object as argument not ${typeof value}`
@@ -266,9 +267,9 @@ function GO(selector) {
 	};
 	self.addClass = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].classList.add(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.classList.add(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").addClass(...) accept String as argument not ${typeof value}`
@@ -278,9 +279,9 @@ function GO(selector) {
 	};
 	self.removeClass = function (value) {
 		if (typeof value === "string") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].classList.remove(value);
-			}
+			self.selector.forEach((sel) => {
+				sel.classList.remove(value);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").removeClass(...) accept String as argument not ${typeof value}`
@@ -299,11 +300,11 @@ function GO(selector) {
 	};
 	self.css = function (value) {
 		if (typeof value === "object") {
-			for (let i = 0; i < self.selector.length; i++) {
+			self.selector.forEach((sel) => {
 				for (let j in value) {
-					self.selector[i].style[j] = value[j];
+					sel.style[j] = value[j];
 				}
-			}
+			});
 		} else if (typeof value === "string") {
 			let style = getComputedStyle(self.selector[0]);
 			return style[value];
@@ -353,27 +354,33 @@ function GO(selector) {
 	};
 	self.fadeIn = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.attr("data-width");
-			let height = self.attr("data-height");
-			let display = self.attr("data-display");
-			let opacity = self.attr("data-opacity");
-			let omin = opacity / (t / 50);
-			self.css({ display: "", opacity: "0" });
-			let o = 0;
-			let loop = () => {
-				if (o < opacity) {
-					o = parseFloat(o) + parseFloat(omin);
-					self.css({ opacity: o });
-					requestAnimationFrame(loop);
-				} else {
-					self.css({ display: "", opacity: "" });
-					self.removeAttr("data-width");
-					self.removeAttr("data-height");
-					self.removeAttr("data-display");
-					self.removeAttr("data-opacity");
-				}
-			};
-			requestAnimationFrame(loop);
+			self.selector.forEach((sel) => {
+				GO(sel).css({
+					display: GO(sel).attr("data-display"),
+					transition: `opacity ${t}ms ease`,
+					opacity: "0",
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						opacity: GO(sel).attr("data-opacity"),
+					});
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
+						display: "",
+						transition: "",
+						opacity: "",
+					});
+					GO(sel).removeAttr("data-height");
+					GO(sel).removeAttr("data-width");
+					GO(sel).removeAttr("data-display");
+					GO(sel).removeAttr("data-opacity");
+					GO(sel).removeAttr("data-padding-top");
+					GO(sel).removeAttr("data-padding-right");
+					GO(sel).removeAttr("data-padding-bottom");
+					GO(sel).removeAttr("data-padding-left");
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").fadeIn(...) accept Int as argument not ${typeof t}`
@@ -383,26 +390,42 @@ function GO(selector) {
 	};
 	self.fadeOut = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.css("width");
-			let height = self.css("height");
-			let display = self.css("display");
-			let opacity = self.css("opacity");
-			if (width !== "auto") self.attr("data-width", width);
-			if (height !== "auto") self.attr("data-height", height);
-			if (display !== "none") self.attr("data-display", display);
-			if (opacity !== "0") self.attr("data-opacity", opacity);
-			let omin = opacity / (t / 50);
-			let o = opacity;
-			let loop = () => {
-				if (o > 0) {
-					o = parseFloat(o) - parseFloat(omin);
-					self.css({ opacity: o });
-					requestAnimationFrame(loop);
-				} else {
-					self.css({ display: "none", opacity: "" });
-				}
-			};
-			requestAnimationFrame(loop);
+			self.selector.forEach((sel) => {
+				GO(sel).attr("data-height", GO(sel).css("height"));
+				GO(sel).attr("data-width", GO(sel).css("width"));
+				GO(sel).attr("data-display", GO(sel).css("display"));
+				GO(sel).attr("data-opacity", GO(sel).css("opacity"));
+				GO(sel).attr(
+					"data-padding-top",
+					GO(sel).css("padding-top")
+				);
+				GO(sel).attr(
+					"data-padding-right",
+					GO(sel).css("padding-right")
+				);
+				GO(sel).attr(
+					"data-padding-bottom",
+					GO(sel).css("padding-bottom")
+				);
+				GO(sel).attr(
+					"data-padding-left",
+					GO(sel).css("padding-left")
+				);
+				GO(sel).css({
+					transition: `opacity ${t}ms ease`,
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						opacity: "0",
+					});
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
+						display: "none",
+						opacity: "",
+					});
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").fadeOut(...) accept Int as argument not ${typeof t}`
@@ -420,59 +443,49 @@ function GO(selector) {
 	};
 	self.slideDown = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.attr("data-width");
-			let height = self.attr("data-height");
-			let display = self.attr("data-display");
-			let opacity = self.attr("data-opacity");
-			let padtop = self.attr("data-padtop");
-			let padleft = self.attr("data-padleft");
-			let padbottom = self.attr("data-padbottom");
-			let padright = self.attr("data-padright");
-			let h = parseFloat(height);
-			let ptop = parseFloat(padtop);
-			let pbottom = parseFloat(padbottom);
-			let hmin = h / (t / 50);
-			let ptmin = ptop / (t / 50);
-			let pbmin = pbottom / (t / 50);
-			let H = 0;
-			let PT = 0;
-			let PB = 0;
-			self.css({
-				height: "0",
-				overflow: "hidden",
-				display: display,
-				"padding-top": "0",
-				"padding-bottom": "0",
-			});
-			let loop = () => {
-				if (H < h) {
-					H = parseFloat(H) + parseFloat(hmin);
-					PT = parseFloat(PT) + parseFloat(ptmin);
-					PB = parseFloat(PB) + parseFloat(pbmin);
-					self.css({
-						height: H + "px",
-						"padding-top": PT + "px",
-						"padding-bottom": PB + "px",
+			self.selector.forEach((sel) => {
+				GO(sel).css({
+					display: GO(sel).attr("data-display"),
+					transition: `height ${t}ms ease,padding ${t}ms ease`,
+					overflow: "hidden",
+					height: 0,
+					"padding-top": 0,
+					"padding-bottom": 0,
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						height: GO(sel).attr("data-height"),
+						"padding-top": GO(sel).attr("data-padding-top"),
+						"padding-bottom": GO(sel).attr(
+							"data-padding-bottom"
+						),
+						"padding-left": GO(sel).attr("data-padding-left"),
+						"padding-right": GO(sel).attr(
+							"data-padding-right"
+						),
 					});
-					requestAnimationFrame(loop);
-				} else {
-					self.css({
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
 						display: "",
+						transition: "",
 						overflow: "",
 						height: "",
-						padding: "",
+						"padding-top": "",
+						"padding-bottom": "",
+						"padding-left": "",
+						"padding-right": "",
 					});
-					self.removeAttr("data-width");
-					self.removeAttr("data-height");
-					self.removeAttr("data-display");
-					self.removeAttr("data-opacity");
-					self.removeAttr("data-padtop");
-					self.removeAttr("data-padleft");
-					self.removeAttr("data-padbottom");
-					self.removeAttr("data-padright");
-				}
-			};
-			requestAnimationFrame(loop);
+					GO(sel).removeAttr("data-height");
+					GO(sel).removeAttr("data-width");
+					GO(sel).removeAttr("data-display");
+					GO(sel).removeAttr("data-opacity");
+					GO(sel).removeAttr("data-padding-top");
+					GO(sel).removeAttr("data-padding-right");
+					GO(sel).removeAttr("data-padding-bottom");
+					GO(sel).removeAttr("data-padding-left");
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").slideDown(...) accept Int as argument not ${typeof t}`
@@ -482,50 +495,54 @@ function GO(selector) {
 	};
 	self.slideUp = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.css("width");
-			let height = self.css("height");
-			let display = self.css("display");
-			let opacity = self.css("opacity");
-			let padtop = self.css("padding-top");
-			let padleft = self.css("padding-left");
-			let padbottom = self.css("padding-bottom");
-			let padright = self.css("padding-right");
-			if (width !== "auto") self.attr("data-width", width);
-			if (height !== "auto") self.attr("data-height", height);
-			if (display !== "none") self.attr("data-display", display);
-			if (opacity !== "0") self.attr("data-opacity", opacity);
-			self.attr("data-padtop", padtop);
-			self.attr("data-padleft", padleft);
-			self.attr("data-padbottom", padbottom);
-			self.attr("data-padright", padright);
-			let h = parseFloat(height);
-			let ptop = parseFloat(padtop);
-			let pbottom = parseFloat(padbottom);
-			let hmin = h / (t / 50);
-			let ptmin = ptop / (t / 50);
-			let pbmin = pbottom / (t / 50);
-			self.css({ height: height, overflow: "hidden" });
-			let loop = () => {
-				if (h > 0) {
-					h = parseFloat(h) - parseFloat(hmin);
-					ptop = parseFloat(ptop) - parseFloat(ptmin);
-					pbottom = parseFloat(pbottom) - parseFloat(pbmin);
-					self.css({
-						height: h + "px",
-						"padding-top": ptop + "px",
-						"padding-bottom": pbottom + "px",
+			self.selector.forEach((sel) => {
+				GO(sel).attr("data-height", GO(sel).css("height"));
+				GO(sel).attr("data-width", GO(sel).css("width"));
+				GO(sel).attr("data-display", GO(sel).css("display"));
+				GO(sel).attr("data-opacity", GO(sel).css("opacity"));
+				GO(sel).attr(
+					"data-padding-top",
+					GO(sel).css("padding-top")
+				);
+				GO(sel).attr(
+					"data-padding-right",
+					GO(sel).css("padding-right")
+				);
+				GO(sel).attr(
+					"data-padding-bottom",
+					GO(sel).css("padding-bottom")
+				);
+				GO(sel).attr(
+					"data-padding-left",
+					GO(sel).css("padding-left")
+				);
+				GO(sel).css({
+					transition: `height ${t}ms ease,padding ${t}ms ease`,
+					overflow: "hidden",
+					height: GO(sel).css("height"),
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						height: "0",
+						"padding-top": "0",
+						"padding-bottom": "0",
+						"padding-left": "0",
+						"padding-right": "0",
 					});
-					requestAnimationFrame(loop);
-				} else {
-					self.css({
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
 						display: "none",
+						transition: "",
 						overflow: "",
 						height: "",
-						padding: "",
+						"padding-top": "",
+						"padding-bottom": "",
+						"padding-left": "",
+						"padding-right": "",
 					});
-				}
-			};
-			requestAnimationFrame(loop);
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").slideUp(...) accept Int as argument not ${typeof t}`
@@ -543,82 +560,57 @@ function GO(selector) {
 	};
 	self.show = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.attr("data-width");
-			let height = self.attr("data-height");
-			let display = self.attr("data-display");
-			let opacity = self.attr("data-opacity");
-			let padtop = self.attr("data-padtop");
-			let padleft = self.attr("data-padleft");
-			let padbottom = self.attr("data-padbottom");
-			let padright = self.attr("data-padright");
-			let h = parseFloat(height);
-			let w = parseFloat(width);
-			let o = parseFloat(opacity);
-			let ptop = parseFloat(padtop);
-			let pleft = parseFloat(padleft);
-			let pbottom = parseFloat(padbottom);
-			let pright = parseFloat(padright);
-			let hmin = h / (t / 50);
-			let wmin = w / (t / 50);
-			let omin = o / (t / 50);
-			let ptmin = ptop / (t / 50);
-			let plmin = pleft / (t / 50);
-			let pbmin = pbottom / (t / 50);
-			let prmin = pright / (t / 50);
-			let H = 0;
-			let W = 0;
-			let O = 0;
-			let PT = 0;
-			let PL = 0;
-			let PB = 0;
-			let PR = 0;
-			self.css({
-				height: "0",
-				width: "0",
-				opacity: "0",
-				padding: "0",
-				overflow: "hidden",
-				display: display,
-			});
-			let loop = () => {
-				if (H < h) {
-					H = parseFloat(H) + parseFloat(hmin);
-					W = parseFloat(W) + parseFloat(wmin);
-					O = parseFloat(O) + parseFloat(omin);
-					PT = parseFloat(PT) + parseFloat(ptmin);
-					PL = parseFloat(PL) + parseFloat(plmin);
-					PB = parseFloat(PB) + parseFloat(pbmin);
-					PR = parseFloat(PR) + parseFloat(prmin);
-					self.css({
-						height: H + "px",
-						width: W + "px",
-						"padding-top": PT + "px",
-						"padding-left": PL + "px",
-						"padding-bottom": PB + "px",
-						"padding-right": PR + "px",
-						opacity: O,
+			self.selector.forEach((sel) => {
+				GO(sel).css({
+					display: GO(sel).attr("data-display"),
+					transition: `opacity ${t}ms ease,width ${t}ms ease,height ${t}ms ease,padding ${t}ms ease`,
+					overflow: "hidden",
+					opacity: "0",
+					width: "0",
+					height: "0",
+					"padding-top": "0",
+					"padding-right": "0",
+					"padding-bottom": "0",
+					"padding-left": "0",
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						opacity: GO(sel).attr("data-opacity"),
+						height: GO(sel).attr("data-height"),
+						width: GO(sel).attr("data-width"),
+						"padding-top": GO(sel).attr("data-padding-top"),
+						"padding-right": GO(sel).attr(
+							"data-padding-right"
+						),
+						"padding-bottom": GO(sel).attr(
+							"data-padding-bottom"
+						),
+						"padding-left": GO(sel).attr("data-padding-left"),
 					});
-					requestAnimationFrame(loop);
-				} else {
-					self.css({
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
 						display: "",
+						transition: "",
 						overflow: "",
-						height: "",
-						width: "",
 						opacity: "",
-						padding: "",
+						width: "",
+						height: "",
+						"padding-top": "",
+						"padding-right": "",
+						"padding-bottom": "",
+						"padding-left": "",
 					});
-					self.removeAttr("data-width");
-					self.removeAttr("data-height");
-					self.removeAttr("data-display");
-					self.removeAttr("data-opacity");
-					self.removeAttr("data-padtop");
-					self.removeAttr("data-padleft");
-					self.removeAttr("data-padbottom");
-					self.removeAttr("data-padright");
-				}
-			};
-			requestAnimationFrame(loop);
+					GO(sel).removeAttr("data-height");
+					GO(sel).removeAttr("data-width");
+					GO(sel).removeAttr("data-display");
+					GO(sel).removeAttr("data-opacity");
+					GO(sel).removeAttr("data-padding-top");
+					GO(sel).removeAttr("data-padding-right");
+					GO(sel).removeAttr("data-padding-bottom");
+					GO(sel).removeAttr("data-padding-left");
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").show(...) accept Int as argument not ${typeof t}`
@@ -628,73 +620,55 @@ function GO(selector) {
 	};
 	self.hide = function (t) {
 		if (typeof t === "number" || typeof t === "undefined") {
-			let width = self.css("width");
-			let height = self.css("height");
-			let display = self.css("display");
-			let opacity = self.css("opacity");
-			let padtop = self.css("padding-top");
-			let padleft = self.css("padding-left");
-			let padbottom = self.css("padding-bottom");
-			let padright = self.css("padding-right");
-			if (width !== "auto") self.attr("data-width", width);
-			if (height !== "auto") self.attr("data-height", height);
-			if (display !== "none") self.attr("data-display", display);
-			if (opacity !== "0") self.attr("data-opacity", opacity);
-			self.attr("data-padtop", padtop);
-			self.attr("data-padleft", padleft);
-			self.attr("data-padbottom", padbottom);
-			self.attr("data-padright", padright);
-			let h = parseFloat(height);
-			let w = parseFloat(width);
-			let o = parseFloat(opacity);
-			let ptop = parseFloat(padtop);
-			let pleft = parseFloat(padleft);
-			let pbottom = parseFloat(padbottom);
-			let pright = parseFloat(padright);
-			let hmin = h / (t / 50);
-			let wmin = w / (t / 50);
-			let omin = o / (t / 50);
-			let ptmin = ptop / (t / 50);
-			let plmin = pleft / (t / 50);
-			let pbmin = pbottom / (t / 50);
-			let prmin = pright / (t / 50);
-			self.css({
-				height: height,
-				width: width,
-				opacity: opacity,
-				overflow: "hidden",
-			});
-			let loop = () => {
-				if (h > 0) {
-					h = parseFloat(h) - parseFloat(hmin);
-					w = parseFloat(w) - parseFloat(wmin);
-					o = parseFloat(o) - parseFloat(omin);
-					ptop = parseFloat(ptop) - parseFloat(ptmin);
-					pleft = parseFloat(pleft) - parseFloat(plmin);
-					pbottom = parseFloat(pbottom) - parseFloat(pbmin);
-					pright = parseFloat(pright) - parseFloat(prmin);
-					self.css({
-						height: h + "px",
-						width: w + "px",
-						"padding-top": ptop + "px",
-						"padding-left": pleft + "px",
-						"padding-bottom": pbottom + "px",
-						"padding-right": pright + "px",
-						opacity: o,
+			self.selector.forEach((sel) => {
+				GO(sel).attr("data-height", GO(sel).css("height"));
+				GO(sel).attr("data-width", GO(sel).css("width"));
+				GO(sel).attr("data-display", GO(sel).css("display"));
+				GO(sel).attr("data-opacity", GO(sel).css("opacity"));
+				GO(sel).attr(
+					"data-padding-top",
+					GO(sel).css("padding-top")
+				);
+				GO(sel).attr(
+					"data-padding-right",
+					GO(sel).css("padding-right")
+				);
+				GO(sel).attr(
+					"data-padding-bottom",
+					GO(sel).css("padding-bottom")
+				);
+				GO(sel).attr(
+					"data-padding-left",
+					GO(sel).css("padding-left")
+				);
+				GO(sel).css({
+					transition: `opacity ${t}ms ease,width ${t}ms ease,height ${t}ms ease,padding ${t}ms ease`,
+					height: GO(sel).css("height"),
+					width: GO(sel).css("width"),
+					"padding-top": GO(sel).css("padding-top"),
+					"padding-right": GO(sel).css("padding-right"),
+					"padding-bottom": GO(sel).css("padding-bottom"),
+					"padding-left": GO(sel).css("padding-left"),
+					overflow: "hidden",
+				});
+				setTimeout(() => {
+					GO(sel).css({
+						opacity: "0",
+						padding: "0",
+						height: "0",
+						width: "0",
 					});
-					requestAnimationFrame(loop);
-				} else {
-					self.css({
+				}, 1);
+				setTimeout(() => {
+					GO(sel).css({
 						display: "none",
-						overflow: "",
+						opacity: "",
 						height: "",
 						width: "",
 						padding: "",
-						opacity: "",
 					});
-				}
-			};
-			requestAnimationFrame(loop);
+				}, t);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").hide(...) accept Int as argument not ${typeof t}`
@@ -713,9 +687,9 @@ function GO(selector) {
 	self.on = function (event, callback) {
 		if (typeof event === "string") {
 			if (typeof callback === "function") {
-				for (let i = 0; i < self.selector.length; i++) {
-					self.selector[i].addEventListener(event, callback);
-				}
+				self.selector.forEach((sel) => {
+					sel.addEventListener(event, callback);
+				});
 			} else {
 				throw new Error(
 					`GO("${selector}").on(...) accept Function as second argument not ${typeof callback}`
@@ -729,18 +703,12 @@ function GO(selector) {
 		return self;
 	};
 	self.hover = function (callback_in, callback_out) {
-		if (typeof f_in === "function") {
-			if (typeof f_out === "function") {
-				for (let i = 0; i < self.selector.length; i++) {
-					self.selector[i].addEventListener(
-						"mouseover",
-						callback_in
-					);
-					self.selector[i].addEventListener(
-						"mouseout",
-						callback_out
-					);
-				}
+		if (typeof callback_in === "function") {
+			if (typeof callback_out === "function") {
+				self.selector.forEach((sel) => {
+					sel.addEventListener("mouseover", callback_in);
+					sel.addEventListener("mouseout", callback_out);
+				});
 			} else {
 				throw new Error(
 					`GO("${selector}").hover(...) accept Function as second argument not ${typeof callback_out}`
@@ -755,9 +723,9 @@ function GO(selector) {
 	};
 	self.load = function (callback) {
 		if (typeof callback === "function") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].onreadystatechange = callback;
-			}
+			self.selector.forEach((sel) => {
+				sel.onreadystatechange = callback;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").load(...) accept Function as argument not ${typeof callback}`
@@ -768,19 +736,19 @@ function GO(selector) {
 	self.ready = function (callback) {
 		let readyEventHandlersInstalled = false;
 		if (typeof callback === "function") {
-			for (let i = 0; i < self.selector.length; i++) {
-				if (self.selector[i].readyState === "complete") {
+			self.selector.forEach((sel) => {
+				if (sel.readyState === "complete") {
 					setTimeout(callback, 1);
 				} else if (!readyEventHandlersInstalled) {
-					if (self.selector[i].addEventListener) {
-						self.selector[i].addEventListener(
+					if (sel.addEventListener) {
+						sel.addEventListener(
 							"DOMContentLoaded",
 							callback,
 							false
 						);
 						window.addEventListener("load", callback, false);
 					} else {
-						self.selector[i].attachEvent(
+						sel.attachEvent(
 							"onreadystatechange",
 							readyStateChange
 						);
@@ -788,7 +756,7 @@ function GO(selector) {
 					}
 					readyEventHandlersInstalled = true;
 				}
-			}
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").ready(...) accept Function as argument not ${typeof callback}`
@@ -798,9 +766,9 @@ function GO(selector) {
 	};
 	self.click = function (callback) {
 		if (typeof callback === "function") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].addEventListener("click", callback);
-			}
+			self.selector.forEach((sel) => {
+				sel.addEventListener("click", callback);
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").click(...) accept Function as argument not ${typeof callback}`
@@ -810,9 +778,9 @@ function GO(selector) {
 	};
 	self.change = function (callback) {
 		if (typeof callback === "function") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].onchange = callback;
-			}
+			self.selector.forEach((sel) => {
+				sel.onchange = callback;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").change(...) accept Function as argument not ${typeof callback}`
@@ -822,9 +790,9 @@ function GO(selector) {
 	};
 	self.submit = function (callback) {
 		if (typeof callback === "function") {
-			for (let i = 0; i < self.selector.length; i++) {
-				self.selector[i].onsubmit = callback;
-			}
+			self.selector.forEach((sel) => {
+				sel.onsubmit = callback;
+			});
 		} else {
 			throw new Error(
 				`GO("${selector}").submit(...) accept Function as argument not ${typeof callback}`
@@ -834,8 +802,8 @@ function GO(selector) {
 	};
 	self.each = function (callback) {
 		if (typeof callback === "function") {
-			Array.from(self.selector).forEach((i) => {
-				callback(i);
+			self.selector.forEach((sel) => {
+				callback(sel);
 			});
 		} else {
 			throw new Error(
@@ -846,7 +814,7 @@ function GO(selector) {
 	};
 	self.include = function (target) {
 		if (typeof target === "string") {
-			Array.from(self.selector).forEach((sel) => {
+			self.selector.forEach((sel) => {
 				GO.ajax({
 					url: target,
 					method: "GET",
@@ -963,15 +931,29 @@ GO.accordion = function (target) {
 			GO(this).next().slideToggle(500);
 		});
 };
-GO.slider = function (target) {
+GO.slider = function (target, time, height) {
 	let slides = document.querySelectorAll(target + " .slider-slide");
 	let dots = document.querySelectorAll(target + " .slider-controll .dot");
 	let prev = document.querySelector(target + " .slider-controll .prev");
 	let next = document.querySelector(target + " .slider-controll .next");
 	let index = 0;
+	let ds = [];
+	dots[index].classList.add("active");
+	slides[index].style["pointer-events"] = "all";
+	slides[index].style["opacity"] = "1";
+	slides[index].style["position"] = "relative";
+	if (dots.length <= 1) {
+		document.querySelector(target + " .slider-controll").style.display =
+			"none";
+	}
+	dots.forEach((dot) => {
+		ds.push(dot);
+	});
 	let hideslides = function () {
 		slides.forEach((slide) => {
-			slide.style.display = "none";
+			slide.style["pointer-events"] = "none";
+			slide.style["opacity"] = "0";
+			slide.style["position"] = "";
 		});
 	};
 	let removedot = function () {
@@ -979,36 +961,65 @@ GO.slider = function (target) {
 			dot.classList.remove("active");
 		});
 	};
-	next.addEventListener("click", function () {
+	let Next = function () {
 		if (index < slides.length - 1) {
-			hideslides();
 			removedot();
+			hideslides();
 			dots[index + 1].classList.add("active");
-			slides[index + 1].style.display = "flex";
+			slides[index + 1].style["pointer-events"] = "all";
+			slides[index + 1].style["opacity"] = "1";
+			slides[index + 1].style["position"] = "relative";
 			index++;
-		}
-	});
-	prev.addEventListener("click", function () {
-		if (index > 0) {
-			hideslides();
+		} else {
 			removedot();
-			dots[index - 1].classList.add("active");
-			slides[index - 1].style.display = "flex";
-			index--;
+			hideslides();
+			index = 0;
+			dots[index].classList.add("active");
+			slides[index].style["pointer-events"] = "all";
+			slides[index].style["opacity"] = "1";
+			slides[index].style["position"] = "relative";
 		}
-	});
+	};
+	let Prev = function () {
+		if (index > 0) {
+			removedot();
+			hideslides();
+			dots[index - 1].classList.add("active");
+			slides[index - 1].style["pointer-events"] = "all";
+			slides[index - 1].style["opacity"] = "1";
+			slides[index - 1].style["position"] = "relative";
+			index--;
+		} else {
+			removedot();
+			hideslides();
+			index = slides.length - 1;
+			dots[index].classList.add("active");
+			slides[index].style["pointer-events"] = "all";
+			slides[index].style["opacity"] = "1";
+			slides[index].style["position"] = "relative";
+		}
+	};
 	dots.forEach((dot) => {
 		dot.addEventListener("click", function () {
 			hideslides();
 			removedot();
 			dots[ds.indexOf(dot)].classList.add("active");
-			slides[ds.indexOf(dot)].style.display = "flex";
+			slides[ds.indexOf(dot)].style["pointer-events"] = "all";
+			slides[ds.indexOf(dot)].style["opacity"] = "1";
+			slides[ds.indexOf(dot)].style["position"] = "relative";
 			index = ds.indexOf(dot);
 		});
 	});
-	if (dots.length <= 1) {
-		document.querySelector(target + " .slider-controll").style.display =
-			"none";
+	next.addEventListener("click", function () {
+		Next();
+	});
+	prev.addEventListener("click", function () {
+		Prev();
+	});
+	if (typeof time !== "undefined" && typeof time === "number") {
+		setInterval(() => {
+			Next();
+		}, time);
 	}
 };
 GO.timer = function ({ target, Class, hours, minutes, seconds }) {
