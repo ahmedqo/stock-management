@@ -7,24 +7,29 @@
 		/>
 		<link rel="stylesheet" href="../styles/GO.1.0.css" />
 		<link rel="stylesheet" href="../styles/GOfont/style.css" />
-		<title>Home | GALINI</title>
+		<title>Login | GALINI</title>
 	</head>
 	<body>
 		<div
-			class="col-6 sm-12 md-12 position-fixed position-top-right"
-			style="z-index: 1000; display: none;"
+			style="display: none;"
+			class="col-6 sm-12 md-12 position-fixed position-top-center"
 		>
-			<div class="alert">
-				<button class="close" onclick="close()">&times;</button>
+			<div class="box alert">
+				<button class="close" onclick="alertTrigger();">
+					&times;
+				</button>
 				<p></p>
 			</div>
 		</div>
 		<div class="block fluid center">
 			<div class="col-5 sm-12 md-10 lg-8">
-				<form id="login" class="block justify-content-center">
+				<form
+					onsubmit="login(event,this)"
+					class="block justify-content-center"
+				>
 					<div class="col-6 sm-12">
 						<img
-							src="../assets/g.png"
+							src="../assets/logo-lg.png"
 							style="display: block; width: 100%;"
 						/>
 					</div>
@@ -71,63 +76,63 @@
 	</body>
 	<script src="../scripts/GO.1.0.js"></script>
 	<script>
-		GO(".alert")
-			.find(".close")
-			.click(function () {
-				GO(".alert").parent().css({ display: "none" });
-			});
-		GO("#login").submit(function (e) {
+		let alertTrigger = function () {
+			GO(".alert").parent().slideUp(300);
+		};
+		let alertClass = function (Class, Message) {
+			GO(".alert").parent().slideDown(300);
+			GO(".alert").removeClass("alert-danger");
+			GO(".alert").removeClass("alert-success");
+			GO(".alert").addClass(Class);
+			GO(".alert").find("p").html(Message);
+		};
+
+		let login = function (e, f) {
 			e.preventDefault();
-			let proceed = false;
+			let valid = false;
 			if (GO("#username").val()) {
 				GO("#username").css({ "border-color": "" });
 			} else {
 				GO("#username").css({ "border-color": "red" });
-				proceed = true;
+				valid = true;
 			}
 			if (GO("#password").val()) {
 				GO("#password").css({ "border-color": "" });
 			} else {
 				GO("#password").css({ "border-color": "red" });
-				proceed = true;
+				valid = true;
 			}
-			if (proceed) {
-				GO(".alert").removeClass("alert-success");
-				GO(".alert").addClass("alert-danger");
-				GO(".alert").find("p").html("All Fields Are Required");
-				GO(".alert").parent().css({ display: "" });
+			if (valid) {
+				alertClass("alert-danger", "All Fields Are Required");
 				return;
 			}
 			GO.ajax({
-				url: "../libs/login.php",
+				url: "../libs/user/login.php",
 				method: "POST",
-				data: new FormData(document.getElementById("login")),
+				data: new FormData(f),
 				success: function (data) {
 					data = JSON.parse(data);
-					if (data["type"] === "Error") {
-						console.error("Login: Error");
-						GO(".alert").removeClass("alert-success");
-						GO(".alert").addClass("alert-danger");
-						GO(".alert").find("p").html(data["message"]);
-						GO(".alert").parent().css({ display: "" });
+					if (data["type"] === "Success") {
+						alertClass("alert-success", data["message"]);
+						GO("#username").val("");
+						GO("#password").val("");
+						setTimeout(() => {
+							window.location.href = "../home/";
+						}, 500);
 					} else {
-						console.info("Login: Success");
-						GO(".alert").removeClass("alert-danger");
-						GO(".alert").addClass("alert-success");
-						GO(".alert").find("p").html(data["message"]);
-						GO(".alert").parent().css({ display: "" });
-						window.location.href = "../home/";
+						alertClass("alert-danger", data["message"]);
 					}
 				},
 			});
-		});
+		};
+
 		window.onload = function () {
 			GO.ajax({
-				url: "../libs/check.php",
+				url: "../libs/user/check.php",
 				method: "POST",
 				success: function (data) {
 					data = JSON.parse(data);
-					if (data["loged_in"]) {
+					if (data["type"] === "Success") {
 						window.location.href = "../home/";
 					}
 				},
